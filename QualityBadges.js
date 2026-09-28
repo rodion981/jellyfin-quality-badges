@@ -14,22 +14,13 @@
         Audio: ['Atmos', 'DTS:X', 'TrueHD', 'DTS-HD MA', 'DTS', 'DD+', 'DD', 'FLAC', 'AAC']
     };
     const ALL_BADGES = Object.values(BADGE_GROUPS).flat();
-    const badgeVars = {
-        '4K': '{{SHOW_4K}}', '1080p': '{{SHOW_1080P}}', '720p': '{{SHOW_720P}}', SD: '{{SHOW_SD}}',
-        DV: '{{SHOW_DV}}', 'HDR10+': '{{SHOW_HDR10_PLUS}}', HDR10: '{{SHOW_HDR10}}', HLG: '{{SHOW_HLG}}',
-        HEVC: '{{SHOW_HEVC}}', AV1: '{{SHOW_AV1}}', AVC: '{{SHOW_AVC}}',
-        Atmos: '{{SHOW_ATMOS}}', 'DTS:X': '{{SHOW_DTS_X}}', TrueHD: '{{SHOW_TRUEHD}}',
-        'DTS-HD MA': '{{SHOW_DTS_HD_MA}}', DTS: '{{SHOW_DTS}}', 'DD+': '{{SHOW_DD_PLUS}}',
-        DD: '{{SHOW_DD}}', FLAC: '{{SHOW_FLAC}}', AAC: '{{SHOW_AAC}}'
-    };
-    const enabledBadges = new Set(ALL_BADGES.filter(label => badgeVars[label] !== 'false' && badgeVars[label] !== '0'));
     const cache = new Map();
     const ancestryCache = new Map();
     const cardState = new WeakMap();
     const observedBoxes = new WeakSet();
     let viewsRequest = null;
     let settingsUser = null;
-    let settings = { libraries: null };
+    let settings = { libraries: null, badges: null };
     const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(entries => {
         entries.forEach(entry => layoutQuality(entry.target.closest('.card')));
     });
@@ -65,11 +56,12 @@
         settingsUser = userId;
         viewsRequest = null;
         ancestryCache.clear();
-        settings = { libraries: null };
+        settings = { libraries: null, badges: null };
         try {
             const saved = JSON.parse(localStorage.getItem(`jf-quality-settings:${userId}`));
             if (saved && typeof saved === 'object') {
                 if (Array.isArray(saved.libraries)) settings.libraries = saved.libraries.filter(id => typeof id === 'string');
+                if (Array.isArray(saved.badges)) settings.badges = saved.badges.filter(label => ALL_BADGES.includes(label));
             }
         } catch { /* Storage may be unavailable or contain invalid data. */ }
     };
@@ -137,7 +129,7 @@
         const heading = document.createElement('h2');
         heading.textContent = 'Quality Badges';
         const hint = document.createElement('p');
-        hint.textContent = 'Оберіть медіатеки. Вибір зберігається для цього користувача у поточному браузері. Позначки налаштовуються в JellyFrame → Моди → Quality Badges → ⚙.';
+        hint.textContent = 'Оберіть медіатеки та позначки. Налаштування зберігаються для цього користувача у поточному браузері.';
         const librariesField = document.createElement('fieldset');
         const librariesLegend = document.createElement('legend');
         librariesLegend.textContent = 'Медіатеки';
@@ -146,6 +138,16 @@
         loading.textContent = 'Завантаження медіатек…';
         librariesField.append(loading);
         form.append(heading, hint, librariesField);
+        Object.entries(BADGE_GROUPS).forEach(([group, labels]) => {
+            const field = document.createElement('fieldset');
+            const legend = document.createElement('legend');
+            legend.textContent = group;
+            const options = document.createElement('div');
+            options.className = 'jf-quality-options';
+            labels.forEach(label => options.append(option('badge', label, settings.badges === null || settings.badges.includes(label))));
+            field.append(legend, options);
+            form.append(field);
+        });
         const actions = document.createElement('div');
         actions.className = 'jf-quality-actions';
         const cancel = document.createElement('button');
@@ -202,8 +204,10 @@
             event.preventDefault();
             if (!views || currentUser() !== userId) return;
             const selectedLibraries = [...form.querySelectorAll('input[name="library"]:checked')].map(input => input.value);
+            const selectedBadges = [...form.querySelectorAll('input[name="badge"]:checked')].map(input => input.value);
             const next = {
-                libraries: selectedLibraries.length === views.length ? null : selectedLibraries
+                libraries: selectedLibraries.length === views.length ? null : selectedLibraries,
+                badges: selectedBadges.length === ALL_BADGES.length ? null : selectedBadges
             };
             try { localStorage.setItem(`jf-quality-settings:${userId}`, JSON.stringify(next)); }
             catch {
@@ -348,7 +352,7 @@
 
         try {
             if (!userId) throw new Error('User unavailable');
-            if (settings.libraries?.length === 0 || enabledBadges.size === 0) {
+            if (settings.libraries?.length === 0 || settings.badges?.length === 0) {
                 current.pending = false;
                 current.empty = true;
                 return;
@@ -368,7 +372,7 @@
                     return;
                 }
             }
-            const badges = item.badges.filter(label => enabledBadges.has(label));
+            const badges = settings.badges === null ? item.badges : item.badges.filter(label => settings.badges.includes(label));
             if (cardState.get(card) !== current || currentUser() !== userId || card.getAttribute('data-id') !== itemId || card.getAttribute('data-type') !== type || card.querySelector('.cardBox') !== cardBox) return;
             current.pending = false;
             current.empty = !badges.length;
