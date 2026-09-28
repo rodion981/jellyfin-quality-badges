@@ -3,34 +3,12 @@
     "id": "quality-badges",
     "name": "Quality Badges",
     "author": "rodion981",
-    "description": "Compact resolution, HDR, video codec, and audio badges on Jellyfin movie and episode posters.",
-    "version": "1.0.0",
+    "description": "Compact resolution, HDR, video codec, and audio badges on Jellyfin movie and episode posters. Configure badges and libraries from the library toolbar.",
+    "version": "1.0.1",
     "jellyfin": "10.10+",
     "tags": ["ui", "metadata"],
     "previewUrl": "https://raw.githubusercontent.com/rodion981/jellyfin-quality-badges/main/thumbnail.png",
     "sourceUrl": "https://github.com/rodion981/jellyfin-quality-badges",
-    "jsUrl": "https://raw.githubusercontent.com/rodion981/jellyfin-quality-badges/main/QualityBadges.min.js",
-    "vars": [
-      { "key": "SHOW_4K", "name": "4K", "description": "Resolution", "type": "boolean", "default": "true" },
-      { "key": "SHOW_1080P", "name": "1080p", "description": "Resolution", "type": "boolean", "default": "true" },
-      { "key": "SHOW_720P", "name": "720p", "description": "Resolution", "type": "boolean", "default": "true" },
-      { "key": "SHOW_SD", "name": "SD", "description": "Resolution", "type": "boolean", "default": "true" },
-      { "key": "SHOW_DV", "name": "Dolby Vision (DV)", "description": "Dynamic range", "type": "boolean", "default": "true" },
-      { "key": "SHOW_HDR10_PLUS", "name": "HDR10+", "description": "Dynamic range", "type": "boolean", "default": "true" },
-      { "key": "SHOW_HDR10", "name": "HDR10", "description": "Dynamic range", "type": "boolean", "default": "true" },
-      { "key": "SHOW_HLG", "name": "HLG", "description": "Dynamic range", "type": "boolean", "default": "true" },
-      { "key": "SHOW_HEVC", "name": "HEVC", "description": "Video codec", "type": "boolean", "default": "true" },
-      { "key": "SHOW_AV1", "name": "AV1", "description": "Video codec", "type": "boolean", "default": "true" },
-      { "key": "SHOW_AVC", "name": "AVC", "description": "Video codec", "type": "boolean", "default": "true" },
-      { "key": "SHOW_ATMOS", "name": "Atmos", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_DTS_X", "name": "DTS:X", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_TRUEHD", "name": "TrueHD", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_DTS_HD_MA", "name": "DTS-HD MA", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_DTS", "name": "DTS", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_DD_PLUS", "name": "DD+", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_DD", "name": "DD", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_FLAC", "name": "FLAC", "description": "Audio", "type": "boolean", "default": "true" },
-      { "key": "SHOW_AAC", "name": "AAC", "description": "Audio", "type": "boolean", "default": "true" }
-    ]
+    "jsUrl": "https://raw.githubusercontent.com/rodion981/jellyfin-quality-badges/main/QualityBadges.min.js"
   }
 ]
